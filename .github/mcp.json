@@ -1,5 +1,4 @@
 {
-  "// NOTE": "MCP config the GitHub Copilot CLI reads (project-level, takes precedence over ~/.copilot/mcp-config.json). The autonomous run-loop uses the CLI, so THIS is the file watchdog.py severs on a hard kill. OAuth token is stored separately under ~/.copilot/mcp-oauth-config/, keyed by the server URL.",
   "mcpServers": {
     "robinhoodTrading": {
       "type": "http",

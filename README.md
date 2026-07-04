@@ -1,7 +1,5 @@
 # rh-copilot-runner
 
-A PowerShell-based task scheduler and prompt orchestrator for Copilot CLI in `-p` (prompt) mode. The runner automates recurring trading cycles by managing timing, scheduling, prompt composition, and CLI invocation—while trading decisions are made inside each Copilot session through the Robinhood MCP server.
-
 > [!CAUTION]
 > **This software can place real trades in a live brokerage account — autonomously, without confirmation prompts.**
 > - It is configured with `--no-ask-user`, meaning the AI agent executes orders directly.
@@ -9,6 +7,9 @@ A PowerShell-based task scheduler and prompt orchestrator for Copilot CLI in `-p
 > - AI/LLM output is not reliable. The agent can misread market conditions, place incorrect orders, or fail silently.
 > - See the [Legal Disclaimer](#legal-disclaimer) for the full risk disclosure.
 > - See [CONTRIBUTING.md](CONTRIBUTING.md) before pushing any changes to avoid accidentally committing live session data.
+
+A PowerShell-based task scheduler and prompt orchestrator for Copilot CLI in `-p` (prompt) mode. The runner automates recurring trading cycles by managing timing, scheduling, prompt composition, and CLI invocation—while trading decisions are made inside each Copilot session through the Robinhood MCP server.
+
 
 ## How It Works
 
@@ -19,6 +20,46 @@ The runner is a lightweight orchestrator that:
 4. **Logs** execution details (exit code, duration, AI credit cost, next scheduled time)
 
 All trading logic, account state management, and decision-making happens inside Copilot during each prompt execution, using the Robinhood MCP server for live account access.
+
+## Prerequisites and Authentication Setup
+
+Before running the scheduler you need:
+
+1. **PowerShell 7.0+** — `winget install Microsoft.PowerShell` or download from [aka.ms/powershell](https://aka.ms/powershell).
+2. **GitHub Copilot CLI** — Install via npm (`npm install -g @githubnext/github-copilot-cli`) or the GitHub CLI extension. Ensure `copilot` resolves in your `PATH`.
+3. **A GitHub Copilot subscription** with access to the model(s) listed in `config/runner.config.json` (Pro, Pro+, Max, Business, or Enterprise — see the model table in the README).
+4. **Robinhood Agentic Trading access** — The account must have Agentic Trading enabled. See [Robinhood's documentation](https://robinhood.com/us/en/support/articles/trading-with-your-agent/).
+
+5. **Clone the repo and configure**:
+
+   ```powershell
+   git clone https://github.com/hman0994/rh-copilot-runner.git
+   cd rh-copilot-runner
+   ```
+   ```
+   Review and edit config/runner.config.json
+   Review and edit example prompts within prompts/
+   Adjust schedule, model, and thinking efforts to match your account and plan.
+   ```
+   ```
+   pwsh -NoProfile -File .\runner.ps1 -Once -DryRun   # smoke test
+   ```
+
+   The `logs/` and `memory/` folders are created automatically by the runner and the Copilot agent on first run.
+6. **Authenticate the Robinhood MCP server** with Copilot CLI:
+
+   ```powershell
+   # Open the workspace in VS Code or run the CLI once with the MCP config active.
+   # Copilot CLI will prompt for OAuth authorization on first use of the robinhoodTrading tool.
+   # The token is stored at: ~/.copilot/mcp-oauth-config/<server-url-hash>
+   # It is NOT stored in this repo.
+   copilot -p "What is my balance in robinhood? Use the robinhoodTrading MCP server." --allow-tool robinhoodTrading
+   ```
+
+   Follow the browser prompt to authorize the Robinhood connection. The OAuth token is stored locally outside the repo and is never committed.
+
+> [!WARNING]
+> **Never commit the `logs/` or `memory/` folders.** They contain live account numbers, positions, order history, and session data generated at runtime. Both folders are listed in `.gitignore`. If you accidentally stage them, run `git restore --staged logs/ memory/` before committing.
 
 ## How to Run
 
@@ -61,41 +102,6 @@ pwsh -NoProfile -File .\runner.ps1
 ```
 
 Stop the process with **Ctrl+C**.
-
-## Prerequisites and Authentication Setup
-
-Before running the scheduler you need:
-
-1. **PowerShell 7.0+** — `winget install Microsoft.PowerShell` or download from [aka.ms/powershell](https://aka.ms/powershell).
-2. **GitHub Copilot CLI** — Install via npm (`npm install -g @githubnext/github-copilot-cli`) or the GitHub CLI extension. Ensure `copilot` resolves in your `PATH`.
-3. **A GitHub Copilot subscription** with access to the model(s) listed in `config/runner.config.json` (Pro, Pro+, Max, Business, or Enterprise — see the model table in the README).
-4. **Robinhood Agentic Trading access** — The account must have Agentic Trading enabled. See [Robinhood's documentation](https://robinhood.com/us/en/support/articles/trading-with-your-agent/).
-5. **Authenticate the Robinhood MCP server** with Copilot CLI:
-
-   ```powershell
-   # Open the workspace in VS Code or run the CLI once with the MCP config active.
-   # Copilot CLI will prompt for OAuth authorization on first use of the robinhoodTrading tool.
-   # The token is stored at: ~/.copilot/mcp-oauth-config/<server-url-hash>
-   # It is NOT stored in this repo.
-   copilot -p "What is today's date?" --allow-tool robinhoodTrading
-   ```
-
-   Follow the browser prompt to authorize the Robinhood connection. The OAuth token is stored locally outside the repo and is never committed.
-
-6. **Clone the repo and configure**:
-
-   ```powershell
-   git clone https://github.com/hman0994/rh-copilot-runner.git
-   cd rh-copilot-runner
-   # Review and edit config/runner.config.json
-   # Adjust schedule, model, and thinking effort to match your account and plan.
-   pwsh -NoProfile -File .\runner.ps1 -Once -DryRun   # smoke test
-   ```
-
-   The `logs/` and `memory/` folders are created automatically by the runner and the Copilot agent on first run.
-
-> [!WARNING]
-> **Never commit the `logs/` or `memory/` folders.** They contain live account numbers, positions, order history, and session data generated at runtime. Both folders are listed in `.gitignore`. If you accidentally stage them, run `git restore --staged logs/ memory/` before committing.
 
 ## Project Structure
 
