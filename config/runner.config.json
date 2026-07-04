@@ -1,0 +1,75 @@
+{
+  "TickIntervalSeconds": 1,
+  "PromptsFolder": "prompts",
+  "LogFolder": "logs",
+  "StartPrompt": {
+    "Enabled": true,
+    "PromptFile": "opening_prompt.md",
+    "PromptText": null,
+    "Model": "gpt-5.5",
+    "ThinkingEffort": "high"
+  },
+  "Schedule": [
+    {
+      "Name": "beginning-daily-summary",
+      "Enabled": true,
+      "Type": "daily-at",
+      "Time": "00:00",
+      "Days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "PromptFile": "daily_summary_prompt.md"
+    },
+    {
+      "Name": "premkt-loop",
+      "Enabled": true,
+      "Type": "interval",
+      "IntervalMinutes": 30,
+      "WindowStart": "07:45",
+      "WindowEnd": "08:30",
+      "Days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "PromptFile": "premkt_loop_prompt.md",
+      "Model": "gpt-5.5",
+      "ThinkingEffort": "medium"
+    },
+    {
+      "Name": "trading-loop",
+      "Enabled": true,
+      "Type": "interval",
+      "IntervalMinutes": 5,
+      "WindowStart": "08:45",
+      "WindowEnd": "16:00",
+      "Days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "PromptFile": "trading_loop_prompt.md"
+    },
+  {
+      "Name": "daily-summary",
+      "Enabled": true,
+      "Type": "daily-at",
+      "Time": "16:00",
+      "Days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "PromptFile": "daily_summary_prompt.md"
+    }
+  ],
+  "CopilotCliConfig": {
+    "ExecutablePath": "copilot",
+    "BaseArguments": ["-p"],
+    "Model": "gpt-5-mini",
+    "ThinkingEffort": "medium",
+    "AdditionalArguments": [
+      "--allow-tool", "robinhoodTrading",
+      "--allow-tool", "read",
+      "--allow-tool", "write",
+      "--allow-tool", "web",
+      "--allow-tool", "todo",
+      "--no-ask-user"
+    ],
+    "WorkingDirectory": ".",
+    "Environment": {}
+  },
+  "Context": {
+    "IncludeRunnerContext": true,
+    "Pretext": [
+      "# Agentic Trading Session | rh-copilot-runner",
+      ""
+    ]
+  }
+}
