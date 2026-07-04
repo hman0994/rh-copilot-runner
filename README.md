@@ -379,15 +379,16 @@ Review logs to troubleshoot scheduling issues, verify prompt execution, and trac
 
 # Tips and Best Practices
 
-1. **Start with a dry run:** Test your config with `-DryRun` before enabling continuous mode.
-2. **Use thinking effort strategically:**
-   - `xhigh` or `max` for opening/planning prompts
-   - `high` for summaries and decision points
-   - `medium` or `low` for fast-loop execution
-3. **Keep schedule windows realistic:** Avoid overlapping windows for different prompt types (e.g., pre-market loop should end before trading loop starts).
-4. **Monitor logs regularly:** Check `logs/runner-*.log` and `logs/latest-invocation.json` to track credit usage and execution status.
-5. **Use local memory files for continuity:** The prompts rely on these files—do not delete them during an active session.
-6. **Test prompts individually:** Use the `-Once` flag to execute a specific prompt before scheduling it.
+> [!TIP]
+> 1. **Start with a dry run:** Test your config with `-DryRun` before enabling continuous mode.
+> 2. **Use thinking effort strategically:**
+>    - `xhigh` or `max` for opening/planning prompts
+>    - `high` for summaries and decision points
+>    - `medium` or `low` for fast-loop execution
+> 3. **Keep schedule windows realistic:** Avoid overlapping windows for different prompt types (e.g., pre-market loop should end before trading loop starts).
+> 4. **Monitor logs regularly:** Check `logs/runner-*.log` and `logs/latest-invocation.json` to track credit usage and execution status.
+> 5. **Use local memory files for continuity:** The prompts rely on these files—do not delete them during an active session.
+> 6. **Test prompts individually:** Use the `-Once` flag to execute a specific prompt before scheduling it.
 
 ## Copilot CLI Models
 
@@ -440,18 +441,20 @@ Free and Student users have access to models through `auto` model selection only
 
 # Legal Disclaimer
 
-**Not financial advice.** This project is an experimental software automation tool provided for educational and informational purposes only. It is not, and must not be construed as, financial, investment, trading, tax, legal, or other professional advice, nor a recommendation, solicitation, or offer to buy or sell any security, cryptocurrency, or other financial instrument.
-
-- The author is **not** a licensed financial advisor, broker-dealer, or investment professional, and no fiduciary or advisory relationship is created by using this software.
-- Trading and investing involve substantial risk, including the possible loss of all capital. Automated and AI-driven trading can amplify these risks and may execute unintended orders.
-- AI/LLM output can be inaccurate, incomplete, or wrong. Nothing produced by this tool or its prompts should be relied upon without independent verification.
-- You are solely responsible for any decisions and trades executed with this software. Test thoroughly in a non-live or paper environment before risking real funds.
-- Past performance does not guarantee future results. Consult a qualified, licensed professional before making financial decisions.
-
-Use of this software is entirely **at your own risk**. See the warranty and liability disclaimers in the [MIT License](https://tlo.mit.edu/understand-ip/exploring-mit-open-source-license-comprehensive-guide) and the [LICENSE](LICENSE) file.
+> [!IMPORTANT]
+> **Not financial advice.** This project is an experimental software automation tool provided for educational and informational purposes only. It is not, and must not be construed as, financial, investment, trading, tax, legal, or other professional advice, nor a recommendation, solicitation, or offer to buy or sell any security, cryptocurrency, or other financial instrument.
+>
+> - The author is **not** a licensed financial advisor, broker-dealer, or investment professional, and no fiduciary or advisory relationship is created by using this software.
+> - Trading and investing involve substantial risk, including the possible loss of all capital. Automated and AI-driven trading can amplify these risks and may execute unintended orders.
+> - AI/LLM output can be inaccurate, incomplete, or wrong. Nothing produced by this tool or its prompts should be relied upon without independent verification.
+> - You are solely responsible for any decisions and trades executed with this software. Test thoroughly in a non-live or paper environment before risking real funds.
+> - Past performance does not guarantee future results. Consult a qualified, licensed professional before making financial decisions.
+>
+> Use of this software is entirely **at your own risk**. See the warranty and liability disclaimers in the [MIT License](https://tlo.mit.edu/understand-ip/exploring-mit-open-source-license-comprehensive-guide) and the [LICENSE](LICENSE) file.
 
 # License
 
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for the full text.
-
-The MIT License is a permissive license that allows reuse, modification, and distribution, while providing the software "as is" without warranty of any kind and disclaiming liability for damages arising from its use.
+> [!NOTE]
+> This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for the full text.
+>
+> The MIT License is a permissive license that allows reuse, modification, and distribution, while providing the software "as is" without warranty of any kind and disclaiming liability for damages arising from its use.
