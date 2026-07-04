@@ -132,6 +132,10 @@ rh-copilot-runner/
 
 # Configuration (runner.config.json)
 
+> [!TIP]
+> 1. See [docs/models.md](docs/models.md) for the full model catalog, effort support per model, and availability by subscription plan.
+> 2. For a description of each prompt file and what it reads/writes, see [docs/prompts.md](docs/prompts.md).
+
 ## Global Settings
 
 ```json
@@ -242,6 +246,9 @@ Controls how Copilot CLI is invoked.
   }
 }
 ```
+### Copilot CLI Models
+
+See **[docs/models.md](docs/models.md)** for the full model catalog, effort level reference, availability by subscription plan, and long-context notes.
 
 **Common Thinking Effort Values:**
 - `none` — No extended thinking (fastest)
@@ -267,115 +274,20 @@ Controls how Copilot CLI is invoked.
 
 # Example Prompt Responsibilities
 
-Each prompt has a clear role in the trading lifecycle:
+Each prompt serves a distinct role in the session lifecycle. See **[docs/prompts.md](docs/prompts.md)** for the full reference, including responsibilities, schedule timing, files read/written, and MCP tool usage per prompt.
 
-### 1. Opening Prompt (`opening_prompt.md`)
-**Runs:** Once, at session startup (if `StartPrompt.Enabled = true`)  
-**Purpose:** Initialize session continuity and planning.
-
-Responsibilities:
-- Pull fresh account snapshot via Robinhood MCP (cash, positions, orders, restrictions)
-- Build discovery surfaces (Robinhood watchlists, screeners for candidates across asset classes)
-- Create/refresh local session files:
-  - `memory/session_memory.md` (cross-cycle context)
-  - `memory/session_plan.md` (comprehensive, decision-ready plan)
-  - `memory/watchlist.md` (ranked candidates with thesis and evidence)
-  - `memory/results.md` (initialized, not finalized yet)
-- Research current market conditions (price action, macro events, catalysts, regime assessment)
-- Compare candidate opportunities across equities, ETFs, options, crypto, and cash
-
-### 2. Pre-Market Loop Prompt (`premkt_loop_prompt.md`)
-**Runs:** Every 30 minutes, 6:45 AM–8:30 AM, weekdays only  
-**Purpose:** Prepare for market open and refine plan.
-
-Responsibilities:
-- Update account state and quote data via Robinhood MCP
-- Refine triggers and watchlist based on overnight news, gaps, or overseas moves
-- Prepare entry/exit checklist for market open
-
-### 3. Trading Loop Prompt (`trading_loop_prompt.md`)
-**Runs:** Every 5 minutes, 8:45 AM–3:00 PM, weekdays only  
-**Purpose:** Execute trades and manage active positions.
-
-Responsibilities:
-- Check account state and current positions via Robinhood MCP
-- Compare real prices and fills to the stored plan
-- Decide: ACT (trade), HOLD (wait), DE-RISK (close/cancel), or PLAN-UPDATE (refine without trading)
-- Update local files minimally with material changes
-- Never improvise trades—only execute stored plans with fresh evidence
-
-### 4. Daily Summary Prompt (`daily_summary_prompt.md`)
-**Runs:** Once daily at 4:00 PM, weekdays only  
-**Purpose:** Review and reflect on daily outcomes.
-
-Responsibilities:
-- Pull final account state via Robinhood MCP
-- Summarize trades executed and outcomes
-- Document lessons learned and carry-forward insights
-
-### 5. Closing Prompt (`closing_prompt.md`)
-**Runs:** On-demand or end-of-session (not scheduled by default)  
-**Purpose:** Flatten the account and finalize session.
-
-Responsibilities:
-- Close all open positions via Robinhood MCP
-- Cancel all open orders
-- Confirm flat account state
-- Write complete session summary to `memory/results.md` with:
-  - Session start/end times
-  - Starting and ending account snapshots
-  - All orders and actions taken
-  - Realized outcomes and lessons
-- Update `memory/session_memory.md` with final state notes for next startup
-
-### 6. Test Prompt (`test_prompt.md`)
-**Runs:** On-demand for testing (not scheduled by default)  
-**Purpose:** Validate setup and tooling.
-
-Use this prompt to test Robinhood MCP connectivity, verify account access, or validate new trading ideas before scheduling them.
+| Prompt file | Runs | Purpose |
+|---|---|---|
+| `opening_prompt.md` | Once at startup | Initialize continuity, research, and plan |
+| `premkt_loop_prompt.md` | Every 30 min, 6:45–8:30 AM weekdays | Refine plan before market open |
+| `trading_loop_prompt.md` | Every 5 min, 8:45 AM–3:00 PM weekdays | Execute trades and manage positions |
+| `daily_summary_prompt.md` | Once daily at 4:00 PM weekdays | Log outcomes and carry-forward notes |
+| `closing_prompt.md` | On-demand | Flatten account and finalize session |
+| `test_prompt.md` | On-demand | Validate MCP connectivity and tooling |
 
 # Local Session Files (memory/, logs/)
 
-## Memory/
-
-These markdown files are created and maintained by prompts during a trading session. They preserve continuity across loop iterations.
-
-### `session_memory.md`
-Cross-cycle context and account state. Updated by opening, trading, and closing prompts.
-- Account snapshot (cash, positions, buying power, restrictions)
-- Session start time and key assumptions
-- Overnight market context (gaps, news, macro events)
-- Material changes flagged by each trading loop
-
-### `session_plan.md`
-The main decision-ready trading plan. Updated by opening prompt and refined during trading loops.
-- Candidate watchlist with thesis, entry triggers, invalidation conditions, sizing, and exit rules
-- No-trade conditions (when to hold fire)
-- Asset class comparison (equities vs. options vs. crypto vs. cash)
-- Explicit evidence and exclusion reasoning
-
-### `watchlist.md`
-Ranked set of tradable candidates. Updated by opening prompt and refined during loops.
-- Symbol, current price, thesis (1–2 sentences)
-- Entry trigger and invalidation
-- Position size and holding period expectation
-- Robinhood watchlist/screener placement (for quick MCP reference)
-- Why candidates are included or explicitly rejected
-
-### `results.md`
-Session outcomes and reflection. Updated throughout the session and finalized at close.
-- Timestamped cycle log (decision, action, evidence for each loop)
-- Final session summary (start/end time, starting/ending account, all trades, realized outcomes, lessons)
-
-## Logs/
-
-The runner creates detailed logs in the `logs/` folder:
-
-- **runner-YYYYMMDD.log** — Timestamped log of all scheduler ticks, prompt executions, and outcomes
-- **latest-invocation.json** — JSON snapshot of the most recent Copilot CLI invocation (args, exit code, duration, credits used)
-- **output-*.txt** — Raw stdout/stderr from each Copilot CLI invocation
-
-Review logs to troubleshoot scheduling issues, verify prompt execution, and track AI credit usage.
+Both folders are generated at runtime and excluded by `.gitignore`. See **[docs/session-files.md](docs/session-files.md)** for a detailed description of each file, what the runner and agent write to them, and the full schema of `latest-invocation.json`.
 
 # Tips and Best Practices
 
@@ -390,54 +302,6 @@ Review logs to troubleshoot scheduling issues, verify prompt execution, and trac
 > 5. **Use local memory files for continuity:** The prompts rely on these files—do not delete them during an active session.
 > 6. **Test prompts individually:** Use the `-Once` flag to execute a specific prompt before scheduling it.
 
-## Copilot CLI Models
-
-Model availability changes often. This section was checked against GitHub's current Copilot model docs and the installed local CLI (`GitHub Copilot CLI 1.0.68`) on 2026-07-03.
-
-Configure models in `runner.config.json` with either the global `CopilotCliConfig.Model` default or a per-prompt `Model` override.
-
-The configuration accepts `--model <model>` and `--effort <level>` values:
-
-| Effort level | Use when |
-| --- | --- |
-| `none` | Lowest latency and lowest reasoning overhead |
-| `low` | Simple checks, small edits, fast recurring loops |
-| `medium` | Default for ordinary loop prompts |
-| `high` | Planning, summaries, multi-step decisions |
-| `xhigh` | Heavier planning and complex debugging |
-| `max` | Highest reasoning spend for the hardest sessions |
-
-### CLI Model Catalog
-
-Free and Student users have access to models through `auto` model selection only. Named model selection requires one of the paid plans shown below, and organization or enterprise admins can further restrict available models.
-
-| Config value | Model name | Provider | Status | Minimum plan / availability | Configurable effort |
-| --- | --- | --- | --- | --- | --- |
-| `auto` | Auto model selection | GitHub routing | GA for Copilot CLI | Available subject to subscription and policy; paid plans receive a 10% model-cost discount for auto selection | Use CLI `--effort` only when the routed model supports it |
-| `claude-haiku-4.5` | Claude Haiku 4.5 | Anthropic | GA | Copilot Pro, Pro+, Max, Business, Enterprise | Not documented as configurable |
-| `claude-opus-4.5` | Claude Opus 4.5 | Anthropic | GA | Copilot Business or Enterprise | Not documented as configurable |
-| `claude-opus-4.6` | Claude Opus 4.6 | Anthropic | GA | Copilot Business or Enterprise | `none`, `low`, `medium`, `high`, `xhigh`, `max` |
-| `claude-opus-4.7` | Claude Opus 4.7 | Anthropic | GA | Copilot Pro+, Max, Business, Enterprise | `none`, `low`, `medium`, `high`, `xhigh`, `max` |
-| `claude-opus-4.8` | Claude Opus 4.8 | Anthropic | GA | Copilot Pro+, Max, Business, Enterprise | `none`, `low`, `medium`, `high`, `xhigh`, `max` |
-| `claude-opus-4.8-fast` | Claude Opus 4.8 fast mode preview | Anthropic | GA model, preview fast mode | Copilot Pro+, Max, Business, Enterprise | `none`, `low`, `medium`, `high`, `xhigh`, `max` |
-| `claude-fable-5` | Claude Fable 5 | Anthropic | GA | Copilot Pro+, Max, Business, Enterprise | `none`, `low`, `medium`, `high`, `xhigh`, `max` |
-| `claude-sonnet-4.5` | Claude Sonnet 4.5 | Anthropic | GA | Copilot Pro, Pro+, Max, Business, Enterprise | Not documented as configurable |
-| `claude-sonnet-4.6` | Claude Sonnet 4.6 | Anthropic | GA | Copilot Pro, Pro+, Max, Business, Enterprise | `none`, `low`, `medium`, `high`, `xhigh`, `max` |
-| `claude-sonnet-5` | Claude Sonnet 5 | Anthropic | GA | Copilot Pro, Pro+, Max, Business, Enterprise | `none`, `low`, `medium`, `high`, `xhigh`, `max` |
-| `gpt-5-mini` | GPT-5 mini | OpenAI | GA | Copilot Pro, Pro+, Max, Business, Enterprise | Not documented as configurable |
-| `gpt-5.3-codex` | GPT-5.3-Codex | OpenAI | GA | Copilot Pro, Pro+, Max, Business, Enterprise | `none`, `low`, `medium`, `high`, `xhigh`, `max` |
-| `gpt-5.4` | GPT-5.4 | OpenAI | GA | Copilot Pro, Pro+, Max, Business, Enterprise | `none`, `low`, `medium`, `high`, `xhigh`, `max` |
-| `gpt-5.4-mini` | GPT-5.4 mini | OpenAI | GA | Copilot Pro, Pro+, Max, Business, Enterprise | Not documented as configurable |
-| `gpt-5.5` | GPT-5.5 | OpenAI | GA | Copilot Pro+, Max, Business, Enterprise | `none`, `low`, `medium`, `high`, `xhigh`, `max` |
-| `gemini-3.1-pro-preview` | Gemini 3.1 Pro | Google | Public preview | Copilot Pro, Pro+, Max, Business, Enterprise | Not documented as configurable |
-| `gemini-3.5-flash` | Gemini 3.5 Flash | Google | GA | Copilot Pro, Pro+, Max, Business, Enterprise | Not documented as configurable |
-| `kimi-k2.7-code` | Kimi-K2.7-Code | Moonshot AI | GA | Copilot Pro, Pro+, Max | Not documented as configurable |
-| Not listed by local CLI 1.0.68 help | MAI-Code-1-Flash | Microsoft | GA | GitHub Docs list it as Copilot CLI supported for Copilot Pro, Pro+, Max, Business, Enterprise | Not documented as configurable |
-
-### Notes:
-- `gpt-5.4 nano`, `gemini-2.5-pro`, `gemini-3-flash`, and `raptor-mini` appear in GitHub's broader Copilot model catalog, but GitHub's client table does not list them as Copilot CLI models.
-- Long context can be selected with `--context long_context` or `ContextTier` if the runner later adds that setting. GitHub currently documents long-context support for `claude-sonnet-4.6`, `claude-opus-4.6`, `claude-opus-4.7`, `claude-opus-4.8`, `claude-sonnet-5`, `claude-fable-5`, `gpt-5.3-codex`, `gpt-5.4`, and `gpt-5.5`; `claude-opus-4.8-fast` supports configurable reasoning but not long context.
-- Model interactions consume GitHub AI Credits based on model and token usage. Individual monthly allowances are currently 1,500 credits for Copilot Pro, 7,000 for Pro+, and 20,000 for Max; Free and Student also include allowances but only expose named models through auto selection.
 
 # Legal Disclaimer
 
