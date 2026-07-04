@@ -116,6 +116,14 @@ $workingDir    = Resolve-RunnerPath $RepoRoot ([string](Get-ConfigValue $cli 'Wo
 $promptsFolder = Resolve-RunnerPath $RepoRoot ([string](Get-ConfigValue $json 'PromptsFolder' 'prompts'))
 $logFolder     = Resolve-RunnerPath $RepoRoot ([string](Get-ConfigValue $json 'LogFolder' 'logs'))
 
+# Apply environment variables from config (mirrors runner.ps1 behaviour)
+$envVars = Get-ConfigValue $cli 'Environment'
+if ($null -ne $envVars -and $envVars -is [psobject]) {
+    $envVars.PSObject.Properties | ForEach-Object {
+        Set-Item -Path ('env:{0}' -f $_.Name) -Value ([string]$_.Value)
+    }
+}
+
 # Model resolution: CLI param > StartPrompt.Model > CopilotCliConfig.Model > 'auto'
 if (-not $Model) {
     $Model = [string](Get-ConfigValue $startPr 'Model' (Get-ConfigValue $cli 'Model' 'auto'))

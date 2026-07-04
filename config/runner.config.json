@@ -40,7 +40,7 @@
       "Days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
       "PromptFile": "trading_loop_prompt.md"
     },
-  {
+    {
       "Name": "daily-summary",
       "Enabled": true,
       "Type": "daily-at",

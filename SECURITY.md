@@ -4,7 +4,7 @@
 
 If you discover a security issue in this project — including anything that could expose credentials, enable unauthorized trade execution, or bypass intended safety controls — **please open a [GitHub Issue](https://github.com/hman0994/rh-copilot-runner/issues/new)** with the label `security`.
 
-For issues that are particularly sensitive (e.g., a vulnerability that could be actively exploited before a fix is available), note in the issue that you would prefer to discuss details privately, and we will respond to coordinate disclosure.
+This keeps details private until a fix is available, reducing the risk of exploitation before remediation. Do not open a public issue for sensitive vulnerabilities.
 
 **Please do not include real account numbers, tokens, or credentials in any issue or pull request.**
 

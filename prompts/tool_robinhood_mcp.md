@@ -86,7 +86,7 @@ Closing cycle:
 
 ### Equities Trading
 
-Agentic accounts currently support long equity orders only. Treat `get_equity_tradability` as the quick eligibility gate, then use `review_equity_order` as the source of truth for what the broker will actually accept for the specific symbol, quantity, and order shape. Cached review results for this account show these equity order types as accepted: market, limit, stop_market, and stop_limit. Do not assume every advanced retail order type is available just because a normal brokerage ticket might offer it; if the review call rejects or narrows the request, follow that result. After placement, confirm what actually happened with `get_equity_orders` and `get_equity_positions`.
+Agentic accounts currently support long equity orders only. Treat `get_equity_tradability` as the quick eligibility gate, then use `review_equity_order` as the source of truth for what the broker will actually accept for the specific symbol, quantity, and order shape. Typical review results show these equity order types as accepted: market, limit, stop_market, and stop_limit — always re-verify with `review_equity_order` for your specific account and order, as accepted types may vary. Do not assume every advanced retail order type is available just because a normal brokerage ticket might offer it; if the review call rejects or narrows the request, follow that result. After placement, confirm what actually happened with `get_equity_orders` and `get_equity_positions`.
 
 - get_equity_positions: Open equity positions with quantity and cost basis.
 - get_equity_quotes: Real-time quotes and prior close (up to 20 symbols).
@@ -108,7 +108,7 @@ Practical order guidance:
 
 ### Options Trading
 
-Agentic accounts currently support long options orders only. Use the contract tools to identify a specific instrument, then rely on `review_option_order` to validate whether the requested trade structure is allowed for the account and market conditions. Cached review results for this account show these option order types as accepted on a representative single-leg contract: market, limit, stop_market, and stop_limit. The review response is the place to look for supported order structure, warnings, and any limits on leg count or contract details; do not assume spreads, rolls, or other multi-leg strategies are available unless the broker explicitly accepts them.
+Agentic accounts currently support long options orders only. Use the contract tools to identify a specific instrument, then rely on `review_option_order` to validate whether the requested trade structure is allowed for the account and market conditions. Typical review results show these option order types as accepted on a representative single-leg contract: market, limit, stop_market, and stop_limit — always re-verify with `review_option_order` for your specific account and contract, as accepted types may vary. The review response is the place to look for supported order structure, warnings, and any limits on leg count or contract details; do not assume spreads, rolls, or other multi-leg strategies are available unless the broker explicitly accepts them.
 
 - get_option_level_upgrade_info: Link/info to apply for options access.
 - get_option_chains: Load option chains.

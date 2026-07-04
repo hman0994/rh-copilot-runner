@@ -26,7 +26,7 @@ All trading logic, account state management, and decision-making happens inside 
 Before running the scheduler you need:
 
 1. **PowerShell 7.0+** — `winget install Microsoft.PowerShell` or download from [aka.ms/powershell](https://aka.ms/powershell).
-2. **GitHub Copilot CLI** — Install via npm (`npm install -g @githubnext/github-copilot-cli`) or the GitHub CLI extension. Ensure `copilot` resolves in your `PATH`.
+2. **GitHub Copilot CLI** — Install via npm (`npm install -g @github/copilot`) or the GitHub CLI extension. Ensure `copilot` resolves in your `PATH`.
 3. **A GitHub Copilot subscription** with access to the model(s) listed in `config/runner.config.json` (Pro, Pro+, Max, Business, or Enterprise — see the model table in the README).
 4. **Robinhood Agentic Trading access** — The account must have Agentic Trading enabled. See [Robinhood's documentation](https://robinhood.com/us/en/support/articles/trading-with-your-agent/).
 
@@ -63,25 +63,15 @@ Before running the scheduler you need:
 
 ## How to Run
 
-### Dry Run (Test Once)
-
-Test the scheduler without executing any prompts and exit after one cycle:
-
-```powershell
-pwsh -NoProfile -File .\runner.ps1 -Once -DryRun
-```
-
-This will:
-- Load the config
-- Check which prompts are due
-- Print the next scheduled prompt
-- Exit without invoking Copilot CLI
-
 ### Dry Run
 
-Test the runner without executing any prompts:
+Test the runner without executing any prompts. Pass `-Once` to exit after a single tick:
 
 ```powershell
+# Single-tick check (load config, evaluate schedule, print result, exit):
+pwsh -NoProfile -File .\runner.ps1 -Once -DryRun
+
+# Continuous dry-run loop (ticks indefinitely, prints what would fire):
 pwsh -NoProfile -File .\runner.ps1 -DryRun
 ```
 
@@ -103,11 +93,22 @@ pwsh -NoProfile -File .\runner.ps1
 
 Stop the process with **Ctrl+C**.
 
+### On-Demand Account Close
+
+Flatten all open positions and cancel open orders immediately, without the main runner loop running:
+
+```powershell
+pwsh -NoProfile -File .\closing.ps1
+```
+
+See [closing.ps1](closing.ps1) for `-Model`, `-Effort`, and `-DryRun` options.
+
 ## Project Structure
 
 ```
 rh-copilot-runner/
 ├── runner.ps1                  # Main scheduler loop (PowerShell)
+├── closing.ps1                 # On-demand account close (flatten all positions)
 ├── config/
 │   └── runner.config.json      # Configuration file (JSON)
 ├── prompts/                    # Prompt templates (Markdown)
@@ -122,7 +123,8 @@ rh-copilot-runner/
 │   ├── session_memory.md
 │   ├── session_plan.md
 │   ├── watchlist.md
-│   └── results.md
+│   ├── results.md
+│   └── summary.md
 ├── logs/                       # Execution logs and artifacts
 │   ├── runner-YYYYMMDD.log
 │   ├── latest-invocation.json
@@ -197,6 +199,9 @@ Fires every `IntervalMinutes` within an optional time window and on selected day
 - `WindowStart` and `WindowEnd`: If omitted, no time window (24/7 for interval type)
 - `Days`: If omitted, all 7 days
 - `Model` and `ThinkingEffort`: If omitted, use global `CopilotCliConfig` defaults
+
+> [!NOTE]
+> All times (`WindowStart`, `WindowEnd`, `Time`) are interpreted as **machine-local time**. Adjust values to match your local timezone — the runner does not convert across timezones.
 
 ### Type 2: Daily At (Once Per Day at Specific Time)
 
@@ -313,8 +318,9 @@ Both folders are generated at runtime and excluded by `.gitignore`. See **[docs/
 > - AI/LLM output can be inaccurate, incomplete, or wrong. Nothing produced by this tool or its prompts should be relied upon without independent verification.
 > - You are solely responsible for any decisions and trades executed with this software. Test thoroughly in a non-live or paper environment before risking real funds.
 > - Past performance does not guarantee future results. Consult a qualified, licensed professional before making financial decisions.
+> - This project is **not affiliated with, endorsed by, or sponsored by** Robinhood Markets, Inc., GitHub, Inc., or Microsoft. "Robinhood", "GitHub", and "Copilot" are trademarks of their respective owners. Users must comply with Robinhood's Terms of Service and any applicable Agentic Trading terms.
 >
-> Use of this software is entirely **at your own risk**. See the warranty and liability disclaimers in the [MIT License](https://tlo.mit.edu/understand-ip/exploring-mit-open-source-license-comprehensive-guide) and the [LICENSE](LICENSE) file.
+> Use of this software is entirely **at your own risk**. See the warranty and liability disclaimers in the [LICENSE](LICENSE) file.
 
 # License
 

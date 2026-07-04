@@ -25,7 +25,7 @@ Primary requirement:
 Do the following in order:
 
 1. Pull current open positions and open orders with Robinhood MCP tools.
-2. Close all open positions and cancel/clear remaining open orders.
+2. Cancel all open orders first, then close each open position. Prefer limit orders at or near the current bid/ask mark; fall back to market orders only if a limit order has no fill path and the position must be closed urgently. For options with wide spreads, use a limit near the mark and report any position that cannot be closed in `results.md` rather than chasing fills.
 3. Re-check account state to confirm flat status.
 4. Update `results.md` with a complete session summary section that includes:
 - session start/end time
