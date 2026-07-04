@@ -1,10 +1,6 @@
 # rh-copilot-runner
 
-[![Release](https://img.shields.io/github/v/release/hman0994/rh-copilot-runner)](https://github.com/hman0994/rh-copilot-runner/releases) [![Stars](https://img.shields.io/github/stars/hman0994/rh-copilot-runner?style=social)](https://github.com/hman0994/rh-copilot-runner/stargazers) [![Forks](https://img.shields.io/github/forks/hman0994/rh-copilot-runner?style=social)](https://github.com/hman0994/rh-copilot-runner/network/members) [![Issues](https://img.shields.io/github/issues/hman0994/rh-copilot-runner)](https://github.com/hman0994/rh-copilot-runner/issues) [![License](https://img.shields.io/github/license/hman0994/rh-copilot-runner)](https://github.com/hman0994/rh-copilot-runner/blob/main/LICENSE) [![Downloads](https://img.shields.io/github/downloads/hman0994/rh-copilot-runner/total)](https://github.com/hman0994/rh-copilot-runner/releases) [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/N6W822KKNQ)
-
-> [!TIP]
-> Test in a paper/demo Robinhood account before enabling live trades. Use `-DryRun` and `-Once` to validate prompts and config.
-
+[![Release](https://img.shields.io/github/v/release/hman0994/rh-copilot-runner)](https://github.com/hman0994/rh-copilot-runner/releases) [![Stars](https://img.shields.io/github/stars/hman0994/rh-copilot-runner?style=social)](https://github.com/hman0994/rh-copilot-runner/stargazers) [![Forks](https://img.shields.io/github/forks/hman0994/rh-copilot-runner?style=social)](https://github.com/hman0994/rh-copilot-runner/network/members) [![Issues](https://img.shields.io/github/issues/hman0994/rh-copilot-runner)](https://github.com/hman0994/rh-copilot-runner/issues) [![License](https://img.shields.io/github/license/hman0994/rh-copilot-runner)](https://github.com/hman0994/rh-copilot-runner/blob/main/LICENSE) [![Downloads](https://img.shields.io/github/downloads/hman0994/rh-copilot-runner/total)](https://github.com/hman0994/rh-copilot-runner/releases) [![ko-fi](https://img.shields.io/badge/ko--fi-buy_me_a_coffe-blue?logo=kofi&logoColor=white)](https://ko-fi.com/N6W822KKNQ)
 
 > [!CAUTION]
 > **This software can place real trades in a live brokerage account — autonomously, without confirmation prompts.**
